@@ -1,0 +1,12 @@
+.listeCouleurs {
+  display: flex;
+  flex-direction: column;
+  padding-left: 100px;
+  padding-right: 200px;
+}
+
+.couleur {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}

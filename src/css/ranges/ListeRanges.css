@@ -1,0 +1,14 @@
+.maitreDetail {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.maitre {
+  flex: 1;
+  margin: 10px;
+}
+
+.detail {
+  flex: 3;
+  margin: 10px;
+}

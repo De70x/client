@@ -1,0 +1,34 @@
+.detailRange {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr, 1fr;
+}
+
+.libelleRange {
+  grid-column: 1;
+}
+
+.grille {
+  grid-column: 1;
+  display: grid;
+  grid-template-columns: repeat(13, var(--taille-combo));
+  row-gap: 1px;
+  column-gap: 3px;
+}
+
+.legende {
+  grid-column: 2;
+}
+
+.combo {
+  display: flex;
+  width: var(--taille-combo);
+  height: var(--taille-combo);
+  border: solid black 1px;
+  border-radius: 5px;
+}
+
+.texteCombo {
+  margin: auto; /* Important */
+  text-align: center;
+}
