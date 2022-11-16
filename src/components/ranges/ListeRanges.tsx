@@ -1,13 +1,13 @@
 import { RangeType } from "../../app/domain/range";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/hooks";
 
-import { rangeActiveSelector } from "../../app/reducers/ranges/rangeActive.slice";
-
-import { setRangeActive } from "../../app/reducers/ranges/rangeActive.slice";
+import {rangeActiveSelector,setRangeActive } from "../../app/reducers/ranges/rangeActive.slice";
 
 import DetailRange from "./DetailRange";
 
 import "../../css/ranges/ListeRanges.css";
+import {creerRange, fetchRanges} from "../../app/reducers/ranges/range.slice";
+import {useEffect} from "react";
 
 interface IRanges {
   ranges: RangeType[];
@@ -17,6 +17,13 @@ export const ListeRanges: React.FC<IRanges> = ({ ranges }) => {
   const dispatch = useAppDispatch();
   const { rangeActive, sauvegarde } =
     useAppSelector(rangeActiveSelector).rangeActiveReducer;
+
+  useEffect(() => {
+    return () => {
+      dispatch(fetchRanges());
+    };
+  }, []);
+
 
   const activerRange = (range: RangeType) => {
     if (!sauvegarde) {
@@ -30,6 +37,21 @@ export const ListeRanges: React.FC<IRanges> = ({ ranges }) => {
       dispatch(setRangeActive(range));
     }
   };
+
+  const handleCreerRange = () => {
+    const range:RangeType = {
+      id: -1,
+      libelle: "Nouvelle range",
+      combos: [],
+      legende: {
+        id: -1,
+        libelle: "Légende",
+        couleurs: []
+      }
+    };
+    dispatch(creerRange(range))
+    setRangeActive(range);
+  }
 
   return (
     <div className="maitreDetail">
@@ -49,6 +71,7 @@ export const ListeRanges: React.FC<IRanges> = ({ ranges }) => {
             </div>
           );
         })}
+        <button onClick={handleCreerRange}>Créer range</button>
       </div>
       <div className="detail">
         <DetailRange range={rangeActive} />

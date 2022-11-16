@@ -26,7 +26,16 @@ const rangesSlice = createSlice({
       state.errors = false;
       state.ranges = payload;
     },
-    getRangesFailure: (state) => {
+    createRange: (state) =>{
+      state.loading = true;
+      state.errors = false;
+    },
+    createRangeSuccess: (state, {payload})=>{
+      state.ranges = [...state.ranges, payload];
+      state.loading = false;
+      state.errors = false;
+    },
+    failure: (state) => {
       state.loading = false;
       state.errors = true;
     },
@@ -35,7 +44,7 @@ const rangesSlice = createSlice({
 
 export default rangesSlice.reducer;
 
-export const { getRanges, getRangesSuccess, getRangesFailure } =
+export const { getRanges, getRangesSuccess, createRange, createRangeSuccess, failure } =
   rangesSlice.actions;
 
 export const rangesSelector = (state: { rangesReducer: RangeState }) => state;
@@ -51,7 +60,21 @@ export function fetchRanges() {
       dispatch(getRangesSuccess(data));
     } catch (error) {
       console.error(error);
-      dispatch(getRangesFailure());
+      dispatch(failure());
     }
   };
+}
+
+export function creerRange(range : RangeType) {
+  return async  (dispatch:any) =>{
+    dispatch(createRange());
+    try{
+      const response = await axios.post("http://localhost:8000/ranges/", range);
+      const data = await response.data;
+      dispatch(createRangeSuccess(data));
+    }catch (error){
+      console.error(error);
+      dispatch(failure());
+    }
+  }
 }
