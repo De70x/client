@@ -1,9 +1,9 @@
 import { ComboType } from "./combo";
-import { LegendeType } from "./legende";
+import {ActionType} from "./action";
 
 export type RangeType = {
   id: number;
   libelle: string;
   combos: ComboType[];
-  legende: LegendeType;
+  actions: ActionType[];
 };

@@ -1,14 +1,14 @@
 import {createSlice} from "@reduxjs/toolkit";
 import axios from "axios";
-import {CouleurType} from "../../domain/couleur";
-import {CouleurToComboType} from "../../domain/couleurToCombo";
 import {RangeType} from "../../domain/range";
+import {ActionType} from "../../domain/action";
+import {ComboActionType} from "../../domain/comboAction";
 
 export interface RangeActiveState {
     loading: boolean;
     errors: boolean;
     rangeActive: RangeType;
-    couleurActive: CouleurType;
+    actionActive: ActionType;
     sauvegarde: boolean;
 }
 
@@ -16,21 +16,21 @@ const rangeParDefaut: RangeType = {
     id: -1,
     libelle: "Aucune Range Sélectionnée",
     combos: [],
-    legende: {id: -1, libelle: "", couleurs: []},
+    actions: []
 };
 
-const couleurParDefaut: CouleurType = {
-    id: -1,
+const actionParDefaut: ActionType = {
+    action_id: -1,
     libelle: "Open",
-    valeur: "#00FF00",
-    legendeId: -1,
+    couleur: "00FF00",
+    range_id: -1,
 };
 
 export const initialState: RangeActiveState = {
     loading: true,
     errors: false,
     rangeActive: rangeParDefaut,
-    couleurActive: couleurParDefaut,
+    actionActive: actionParDefaut,
     sauvegarde: true,
 };
 
@@ -42,10 +42,10 @@ const rangeActiveSlice = createSlice({
             state.sauvegarde = true;
             state.rangeActive = payload;
             state.loading = false;
-            state.couleurActive = payload.legende.couleurs[0];
+            state.actionActive = payload.actions[0];
         },
         setCouleurActive: (state, {payload}) => {
-            state.couleurActive = payload;
+            state.actionActive = payload;
         },
         saveRange: (state) => {
             state.loading = true;
@@ -57,26 +57,26 @@ const rangeActiveSlice = createSlice({
         },
         updateCouleur: (state, {payload}) => {
             state.sauvegarde = false;
-            state.rangeActive.legende.couleurs =
-                state.rangeActive.legende.couleurs.map((c) => ({
-                    ...c,
-                    libelle: c.id === payload.id ? payload.libelle : c.libelle,
-                    valeur: c.id === payload.id ? payload.valeur : c.valeur,
+            state.rangeActive.actions =
+                state.rangeActive.actions.map((a) => ({
+                    ...a,
+                    libelle: a.action_id === payload.id ? payload.libelle : a.libelle,
+                    valeur: a.action_id === payload.id ? payload.couleur : a.couleur,
                 }));
         },
         updateCouleurCombo: (state, {payload}) => {
             state.sauvegarde = false;
             state.rangeActive.combos = state.rangeActive.combos.map((c) => ({
                 ...c,
-                couleurs:
-                    c.id === payload.comboId ? [...c.couleurs, payload] : c.couleurs,
+                actions:
+                    c.id === payload.comboId ? [...c.actions, payload] : c.actions,
             }));
         },
         deleteCouleurCombo: (state, {payload}) => {
             state.sauvegarde = false;
             state.rangeActive.combos = state.rangeActive.combos.map((c) => ({
                 ...c,
-                couleurs: c.id === payload ? [] : c.couleurs,
+                actions: c.id === payload ? [] : c.actions,
             }));
         },
         addColor: (state) => {
@@ -86,8 +86,8 @@ const rangeActiveSlice = createSlice({
             state.loading = false;
             state.errors = false;
             state.sauvegarde = false;
-            state.rangeActive.legende.couleurs = [
-                ...state.rangeActive.legende.couleurs,
+            state.rangeActive.actions = [
+                ...state.rangeActive.actions,
                 payload,
             ];
         },
@@ -98,11 +98,11 @@ const rangeActiveSlice = createSlice({
             state.loading = false;
             state.sauvegarde = false;
             state.errors = false;
-            state.rangeActive.legende.couleurs =
-                state.rangeActive.legende.couleurs.filter((c) => c.id !== payload.id);
+            state.rangeActive.actions =
+                state.rangeActive.actions.filter((a) => a.action_id !== payload.id);
 
             state.rangeActive.combos.forEach((c) => {
-                c.couleurs = c.couleurs.filter((coul) => coul.couleurId !== payload.id);
+                c.actions = c.actions.filter((coul) => coul.action_id !== payload.id);
             });
         },
         failure: (state) => {
@@ -140,19 +140,19 @@ export function activerRange(range: RangeType) {
     };
 }
 
-export function activerCouleur(couleur: CouleurType) {
+export function activerCouleur(couleur: ActionType) {
     return (dispatch: any) => {
         dispatch(setCouleurActive(couleur));
     };
 }
 
-export function changerCouleur(couleur: CouleurType) {
+export function changerCouleur(couleur: ActionType) {
     return (dispatch: any) => {
         dispatch(updateCouleur(couleur));
     };
 }
 
-export function changerCouleursCombo(cToC: CouleurToComboType) {
+export function changerCouleursCombo(cToC: ComboActionType) {
     return (dispatch: any) => {
         dispatch(updateCouleurCombo(cToC));
     };
@@ -170,7 +170,7 @@ export function sauvegarderRange(range: RangeType) {
 
         try {
             const response = await axios.put(
-                "http://localhost:8000/ranges/" + range.id,
+                "http://localhost:5000/api/ranges/" + range.id,
                 range
             );
             const data = await response.data;
@@ -182,13 +182,13 @@ export function sauvegarderRange(range: RangeType) {
     };
 }
 
-export function nouvelleCouleur(couleur: CouleurType) {
+export function nouvelleCouleur(couleur: ActionType) {
     return async (dispatch: any) => {
         dispatch(addColor());
 
         try {
             const response = await axios.post(
-                "http://localhost:8000/couleurs/",
+                "http://localhost:5000/api/action/",
                 couleur
             );
             const data = await response.data;
@@ -200,18 +200,18 @@ export function nouvelleCouleur(couleur: CouleurType) {
     };
 }
 
-export function supprimerCouleur(couleur: CouleurType) {
+export function supprimerCouleur(couleur: ActionType) {
     return async (dispatch: any) => {
         dispatch(deleteColor());
 
         try {
-            if (couleur.id !== -1) {
+            if (couleur.action_id !== -1) {
                 // On supprime la couleur dans la range
                 await axios.delete(
-                    "http://localhost:8000/couleursToCombos/cascade/" + couleur.id
+                    "http://localhost:5000/api/couleursToCombos/cascade/" + couleur.action_id
                 );
 
-                await axios.delete("http://localhost:8000/couleurs/" + couleur.id);
+                await axios.delete("http://localhost:5000/api/couleurs/" + couleur.action_id);
             }
 
             dispatch(deleteColorSuccess(couleur));

@@ -8,7 +8,7 @@ import {
 } from "../../app/reducers/ranges/rangeActive.slice";
 import "../../css/ranges/DetailRange.css";
 import Combo from "../combos/Combo";
-import Legende from "../legendes/Legende";
+import Couleur from "../couleurs/Couleur";
 
 interface IRange {
     range: RangeType;
@@ -36,11 +36,6 @@ const DetailRange: React.FC<IRange> = ({range}) => {
 
     const sauverRange = () => {
         range = {...range, libelle: texte};
-        range.combos.forEach(c=>{
-            if(c.couleurs.length !=0){
-                console.log(c.couleurs);
-            }
-        });
         dispatch(sauvegarderRange(range));
         dispatch(fetchRanges());
         dispatch(setRangeActive(range));
@@ -80,7 +75,9 @@ const DetailRange: React.FC<IRange> = ({range}) => {
                     })}
                 </div>
                 <div className="legende">
-                    <Legende legende={range.legende}/>
+                    {range.actions.map(a=>{
+                        return <Couleur couleur={a}/>;
+                    })}
                 </div>
                 {range.id !== -1 && (
                     <button onClick={() => sauverRange()}>Sauvegarder</button>

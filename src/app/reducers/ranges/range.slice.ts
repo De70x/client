@@ -54,9 +54,9 @@ export function fetchRanges() {
     dispatch(getRanges());
 
     try {
-      const response = await axios.get("http://localhost:8000/ranges");
-
+      const response = await axios.get("http://localhost:5000/api/range");
       const data = await response.data;
+      console.log(data);
       dispatch(getRangesSuccess(data));
     } catch (error) {
       console.error(error);
@@ -69,7 +69,7 @@ export function creerRange(range : RangeType) {
   return async  (dispatch:any) =>{
     dispatch(createRange());
     try{
-      const response = await axios.post("http://localhost:8000/ranges/", range);
+      const response = await axios.post("http://localhost:5000/api/ranges/", range);
       const data = await response.data;
       dispatch(createRangeSuccess(data));
     }catch (error){

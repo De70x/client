@@ -1,5 +1,4 @@
 import React, { ChangeEvent, SyntheticEvent, useRef, useState } from "react";
-import { CouleurType } from "../../app/domain/couleur";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/hooks";
 import {
   setCouleurActive,
@@ -7,16 +6,17 @@ import {
   rangeActiveSelector,
   supprimerCouleur,
 } from "../../app/reducers/ranges/rangeActive.slice";
+import {ActionType} from "../../app/domain/action";
 
 interface ICouleur {
-  couleur: CouleurType;
+  couleur: ActionType;
 }
 
 const Couleur: React.FC<ICouleur> = ({ couleur }) => {
   const dispatch = useAppDispatch();
-  const { couleurActive } =
+  const { actionActive } =
     useAppSelector(rangeActiveSelector).rangeActiveReducer;
-  let couleurSauv: CouleurType = couleurActive;
+  let couleurSauv: ActionType = actionActive;
   const inputRef = useRef() as React.MutableRefObject<HTMLInputElement>;
   const [texte, setTexte] = useState(couleur.libelle);
 
@@ -25,10 +25,10 @@ const Couleur: React.FC<ICouleur> = ({ couleur }) => {
   // on aurait de gros ralentissement.
   const changeCouleur = (
     e: ChangeEvent<HTMLInputElement>,
-    couleur: CouleurType
+    couleur: ActionType
   ) => {
     dispatch(setCouleurActive(couleur));
-    couleurSauv = { ...couleur, valeur: e.target.value };
+    couleurSauv = { ...couleur, couleur: e.target.value };
   };
 
   const sauverCouleur = () => {
@@ -50,20 +50,20 @@ const Couleur: React.FC<ICouleur> = ({ couleur }) => {
   };
 
   return (
-    <label key={couleur.id} className="couleur">
+    <label key={couleur.action_id} className="couleur">
       <input
         type="radio"
         name="couleurActive"
-        value={couleur.id}
+        value={couleur.action_id}
         onChange={(e) => {
           changementCouleur(e);
         }}
-        checked={couleur.id === couleurActive?.id}
+        checked={couleur.action_id === actionActive?.action_id}
       />
       <input type="text" ref={inputRef} value={texte} onChange={changerTexte} />
       <input
         type="color"
-        value={couleur.valeur}
+        value={couleur.couleur}
         onChange={(e) => changeCouleur(e, couleur)}
         onBlur={() => {
           sauverCouleur();

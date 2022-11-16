@@ -1,10 +1,10 @@
-import { CouleurType } from "../domain/couleur";
-import { RangeType } from "../domain/range";
+import {RangeType} from "../domain/range";
+import {ActionType} from "../domain/action";
 
-export const trierCouleursLegendes = (c1: CouleurType, c2: CouleurType) => {
-  return c2.id - c1.id;
+export const trierCouleursLegendes = (c1: ActionType, c2: ActionType) => {
+    return c2.action_id - c1.action_id;
 };
 
 export const trierRanges = (r1: RangeType, r2: RangeType) => {
-  return r2.id - r1.id;
+    return r2.id - r1.id;
 };
