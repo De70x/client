@@ -69,7 +69,7 @@ export function creerRange(range : RangeType) {
   return async  (dispatch:any) =>{
     dispatch(createRange());
     try{
-      const response = await axios.post("http://localhost:5000/api/ranges/", range);
+      const response = await axios.post("http://localhost:5000/api/range/", range);
       const data = await response.data;
       dispatch(createRangeSuccess(data));
     }catch (error){

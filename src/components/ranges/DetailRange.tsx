@@ -1,34 +1,35 @@
-import React, {createRef, PointerEvent, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {RangeType} from "../../app/domain/range";
 import {useAppDispatch} from "../../app/hooks/hooks";
 import {fetchRanges} from "../../app/reducers/ranges/range.slice";
 import {
+    nouvelleCouleur,
     sauvegarderRange,
     setRangeActive,
 } from "../../app/reducers/ranges/rangeActive.slice";
 import "../../css/ranges/DetailRange.css";
+import "../../css/legendes/Legende.css";
 import Combo from "../combos/Combo";
 import Couleur from "../couleurs/Couleur";
+import {ActionType} from "../../app/domain/action";
 
 interface IRange {
     range: RangeType;
 }
 
 const DetailRange: React.FC<IRange> = ({range}) => {
-    const [painting, setPainting] = useState(false);
     const dispatch = useAppDispatch();
-    const refs: Array<React.RefObject<any>> = [];
     const inputRef = useRef() as React.MutableRefObject<HTMLInputElement>;
     const [texte, setTexte] = useState(range.libelle);
+    const actionDefault: Partial<ActionType> = {
+        couleur: '#00FF00',
+        range_id: range.range_id,
+        libelle: 'Open',
+    }
 
     useEffect(() => {
         setTexte(range.libelle);
     }, [range.libelle]);
-
-    range.combos.forEach((c) => {
-        const comboRef = createRef<any>();
-        refs.push(comboRef);
-    });
 
     const changerTexte = () => {
         setTexte(inputRef.current.value);
@@ -41,47 +42,38 @@ const DetailRange: React.FC<IRange> = ({range}) => {
         dispatch(setRangeActive(range));
     };
 
-    const grille = document.getElementById("grille");
-    const paint = (e: PointerEvent) => {
-        if (painting && grille) {
-            const x = Math.floor((e.clientX - grille.offsetLeft) / 52);
-            const y = Math.floor((e.clientY - grille.offsetTop) / 52);
-            const indice = y * 13 + x;
-            const currentRef = refs[indice];
-            currentRef.current.paintColor();
-        }
-    };
-
-    const pointerDown = (e: PointerEvent) => {
-        setPainting(true);
-        grille?.setPointerCapture(e.pointerId);
-    };
+    const addAction = () => {
+        dispatch(nouvelleCouleur(actionDefault));
+    }
 
     if (range == null) {
-        return <>Aucune Range n'est sélectionnée</>;
+        return <p>Aucune Range n'est sélectionnée</p>;
     } else {
         return (
             <div className="detailRange">
-                <input type="text" ref={inputRef} value={texte} onChange={changerTexte}/>
+                <input type="text" ref={inputRef} value={texte} onChange={changerTexte} key={"inputLibelle"}/>
                 <div
+                    key={"grille"}
                     id="grille"
                     className="grille"
-                    onPointerDown={pointerDown}
-                    onPointerUp={() => setPainting(false)}
-                    onPointerMove={paint}
                 >
                     {range.combos.map((c) => {
-                        return <Combo combo={c} key={c.id} ref={refs[c.idx]}/>;
+                        return <Combo combo={c} key={c.combo_id}/>;
                     })}
                 </div>
-                <div className="legende">
-                    {range.actions.map(a=>{
-                        return <Couleur couleur={a}/>;
-                    })}
+                <div className="legende" key={"legende"}>
+                    <div className={"listeCouleurs"}>
+                        {range.actions.map(a => {
+                            return <Couleur couleur={a}/>;
+                        })}
+                    </div>
+                    {range.range_id !== -1 ? (
+                        <button onClick={addAction} key={"ajouterAction"}>Ajouter une action</button>
+                    ) : null}
                 </div>
-                {range.id !== -1 && (
-                    <button onClick={() => sauverRange()}>Sauvegarder</button>
-                )}
+                {range.range_id !== -1 ? (
+                    <button onClick={() => sauverRange()} key={"save"}>Sauvegarder</button>
+                ) : null}
             </div>
         );
     }

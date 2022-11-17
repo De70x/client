@@ -40,7 +40,7 @@ export const ListeRanges: React.FC<IRanges> = ({ranges}) => {
 
     const handleCreerRange = () => {
         const range: RangeType = {
-            id: -1,
+            range_id: -1,
             libelle: "Nouvelle range",
             combos: [],
             actions: []
@@ -51,14 +51,14 @@ export const ListeRanges: React.FC<IRanges> = ({ranges}) => {
 
     return (
         <div className="maitreDetail">
-            <div className="maitre">
+            <div className="maitre" key={"maitre"}>
                 {ranges.map((r) => {
                     const style =
-                        r.id === rangeActive?.id ? {backgroundColor: "red"} : {};
+                        r.range_id === rangeActive?.range_id ? {backgroundColor: "red"} : {};
                     return (
                         <div
                             style={style}
-                            key={r.id}
+                            key={r.range_id}
                             onClick={() => {
                                 activerRange(r);
                             }}
@@ -67,9 +67,9 @@ export const ListeRanges: React.FC<IRanges> = ({ranges}) => {
                         </div>
                     );
                 })}
-                <button onClick={handleCreerRange}>Créer range</button>
+                <button onClick={handleCreerRange} key={"btn"}>Créer range</button>
             </div>
-            <div className="detail">
+            <div className="detail" key={"detail"}>
                 <DetailRange range={rangeActive}/>
             </div>
         </div>

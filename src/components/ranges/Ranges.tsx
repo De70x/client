@@ -19,13 +19,13 @@ const Ranges = () => {
   }, [dispatch]);
 
   if (loading) {
-    return <Spinner />;
+    return <Spinner key={"spinner"}/>;
   }
   if (errors) {
-    return <>Une erreur est survenue </>;
+    return <p key={"erreur"}>Une erreur est survenue </p>;
   }
   if (!loading && !errors) {
-    return <ListeRanges ranges={ranges} />;
+    return <ListeRanges ranges={ranges} key={"listeRanges"}/>;
   }
   return null;
 };

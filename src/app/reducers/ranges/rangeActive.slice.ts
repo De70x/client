@@ -13,7 +13,7 @@ export interface RangeActiveState {
 }
 
 const rangeParDefaut: RangeType = {
-    id: -1,
+    range_id: -1,
     libelle: "Aucune Range Sélectionnée",
     combos: [],
     actions: []
@@ -65,24 +65,26 @@ const rangeActiveSlice = createSlice({
                 }));
         },
         updateCouleurCombo: (state, {payload}) => {
+            console.log(payload)
             state.sauvegarde = false;
             state.rangeActive.combos = state.rangeActive.combos.map((c) => ({
                 ...c,
                 actions:
-                    c.id === payload.comboId ? [...c.actions, payload] : c.actions,
+                    c.combo_id === payload.combo_id ? [...c.actions, payload] : c.actions,
             }));
         },
         deleteCouleurCombo: (state, {payload}) => {
             state.sauvegarde = false;
             state.rangeActive.combos = state.rangeActive.combos.map((c) => ({
                 ...c,
-                actions: c.id === payload ? [] : c.actions,
+                actions: c.combo_id === payload ? [] : c.actions,
             }));
         },
         addColor: (state) => {
             state.loading = true;
         },
         addColorSuccess: (state, {payload}) => {
+            console.log(payload);
             state.loading = false;
             state.errors = false;
             state.sauvegarde = false;
@@ -170,7 +172,7 @@ export function sauvegarderRange(range: RangeType) {
 
         try {
             const response = await axios.put(
-                "http://localhost:5000/api/ranges/" + range.id,
+                "http://localhost:5000/api/range/",
                 range
             );
             const data = await response.data;
@@ -182,10 +184,9 @@ export function sauvegarderRange(range: RangeType) {
     };
 }
 
-export function nouvelleCouleur(couleur: ActionType) {
+export function nouvelleCouleur(couleur: Partial<ActionType>) {
     return async (dispatch: any) => {
         dispatch(addColor());
-
         try {
             const response = await axios.post(
                 "http://localhost:5000/api/action/",
@@ -206,14 +207,8 @@ export function supprimerCouleur(couleur: ActionType) {
 
         try {
             if (couleur.action_id !== -1) {
-                // On supprime la couleur dans la range
-                await axios.delete(
-                    "http://localhost:5000/api/couleursToCombos/cascade/" + couleur.action_id
-                );
-
-                await axios.delete("http://localhost:5000/api/couleurs/" + couleur.action_id);
+                await axios.delete("http://localhost:5000/api/action/" + couleur.action_id);
             }
-
             dispatch(deleteColorSuccess(couleur));
         } catch (error) {
             console.error(error);

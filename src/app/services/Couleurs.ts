@@ -1,6 +1,5 @@
 export const inverseCouleur = (couleur: string) => {
-  // On vire le # si besoin
-  const codeHexa = couleur.length > 6  ? couleur.substring(1) : couleur;
+  const codeHexa = couleur.substring(1);
   const c = parseInt(codeHexa, 16);
   const ancienR = (c >> 16) & 0xff;
   const ancienG = (c >> 8) & 0xff;
