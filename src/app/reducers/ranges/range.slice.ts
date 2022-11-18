@@ -56,7 +56,6 @@ export function fetchRanges() {
     try {
       const response = await axios.get("http://localhost:5000/api/range");
       const data = await response.data;
-      console.log(data);
       dispatch(getRangesSuccess(data));
     } catch (error) {
       console.error(error);

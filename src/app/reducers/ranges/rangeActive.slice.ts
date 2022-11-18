@@ -65,7 +65,6 @@ const rangeActiveSlice = createSlice({
                 }));
         },
         updateCouleurCombo: (state, {payload}) => {
-            console.log(payload)
             state.sauvegarde = false;
             state.rangeActive.combos = state.rangeActive.combos.map((c) => ({
                 ...c,
@@ -84,7 +83,6 @@ const rangeActiveSlice = createSlice({
             state.loading = true;
         },
         addColorSuccess: (state, {payload}) => {
-            console.log(payload);
             state.loading = false;
             state.errors = false;
             state.sauvegarde = false;
@@ -170,10 +168,15 @@ export function sauvegarderRange(range: RangeType) {
     return async (dispatch: any) => {
         dispatch(saveRange());
 
+        /**
+         * On crée une range light avec seulement les combos utiles pour réduire les requêtes
+         */
+        const rangeSauvee = {...range,combos:range.combos.filter(c=>c.actions.length!=0)}
+
         try {
             const response = await axios.put(
                 "http://localhost:5000/api/range/",
-                range
+                rangeSauvee
             );
             const data = await response.data;
             dispatch(saveRangeSuccess(data));
@@ -201,15 +204,15 @@ export function nouvelleCouleur(couleur: Partial<ActionType>) {
     };
 }
 
-export function supprimerCouleur(couleur: ActionType) {
+export function supprimerCouleur(action: ActionType) {
     return async (dispatch: any) => {
         dispatch(deleteColor());
 
         try {
-            if (couleur.action_id !== -1) {
-                await axios.delete("http://localhost:5000/api/action/" + couleur.action_id);
+            if (action.action_id !== -1) {
+                await axios.delete("http://localhost:5000/api/action/" + action.action_id);
             }
-            dispatch(deleteColorSuccess(couleur));
+            dispatch(deleteColorSuccess(action));
         } catch (error) {
             console.error(error);
             dispatch(failure());

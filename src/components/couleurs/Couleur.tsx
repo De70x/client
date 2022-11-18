@@ -32,6 +32,7 @@ const Couleur: React.FC<ICouleur> = ({ couleur }) => {
   };
 
   const sauverCouleur = () => {
+    console.log("savegarde")
     dispatch(changerCouleur(couleurSauv));
   };
 
