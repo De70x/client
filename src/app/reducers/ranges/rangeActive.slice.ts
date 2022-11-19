@@ -44,7 +44,7 @@ const rangeActiveSlice = createSlice({
             state.loading = false;
             state.actionActive = payload.actions[0];
         },
-        setCouleurActive: (state, {payload}) => {
+        setActionActive: (state, {payload}) => {
             state.actionActive = payload;
         },
         saveRange: (state) => {
@@ -55,13 +55,13 @@ const rangeActiveSlice = createSlice({
             state.loading = false;
             state.sauvegarde = true;
         },
-        updateCouleur: (state, {payload}) => {
+        updateAction: (state, {payload}) => {
             state.sauvegarde = false;
             state.rangeActive.actions =
                 state.rangeActive.actions.map((a) => ({
                     ...a,
                     libelle: a.action_id === payload.id ? payload.libelle : a.libelle,
-                    valeur: a.action_id === payload.id ? payload.couleur : a.couleur,
+                    couleur: a.action_id === payload.id ? payload.couleur : a.couleur,
                 }));
         },
         updateCouleurCombo: (state, {payload}) => {
@@ -117,10 +117,10 @@ export default rangeActiveSlice.reducer;
 
 export const {
     setRangeActive,
-    setCouleurActive,
+    setActionActive,
     saveRange,
     saveRangeSuccess,
-    updateCouleur,
+    updateAction,
     updateCouleurCombo,
     deleteCouleurCombo,
     addColor,
@@ -142,13 +142,13 @@ export function activerRange(range: RangeType) {
 
 export function activerCouleur(couleur: ActionType) {
     return (dispatch: any) => {
-        dispatch(setCouleurActive(couleur));
+        dispatch(setActionActive(couleur));
     };
 }
 
-export function changerCouleur(couleur: ActionType) {
+export function sauverAction(action: ActionType) {
     return (dispatch: any) => {
-        dispatch(updateCouleur(couleur));
+        dispatch(updateAction(action));
     };
 }
 

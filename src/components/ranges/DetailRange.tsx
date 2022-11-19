@@ -64,7 +64,7 @@ const DetailRange: React.FC<IRange> = ({range}) => {
                 <div className="legende" key={"legende"}>
                     <div className={"listeCouleurs"}>
                         {range.actions.map(a => {
-                            return <Couleur couleur={a}/>;
+                            return <Couleur action={a}/>;
                         })}
                     </div>
                     {range.range_id !== -1 ? (
